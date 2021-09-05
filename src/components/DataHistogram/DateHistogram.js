@@ -1,11 +1,16 @@
-import {scaleLinear,  
+import {
+    select,
+    scaleLinear,  
     extent, 
     scaleTime, 
     timeFormat, 
     bin,
     timeMonths,
     sum,
-    max} from 'd3';
+    max,
+    brushX
+} from 'd3';
+import { useRef, useEffect } from 'react';
 
 import {HistogramPlot} from './HistogramPlot';
 import {AxisBottom} from './AxisBottom';
@@ -21,10 +26,12 @@ const yAxisLabelOffset = 30
 export const DateHistogram = ({
     data,
     width,
-    height
+    height,
+    setBrushExtent,
+    xValue
 }) =>{
+    const brushRef = useRef();
 
-    const xValue = d => d["Reported Date"] ;
     const xAxisLabel = 'Time'
   
   
@@ -60,6 +67,19 @@ export const DateHistogram = ({
                   .domain([0, max(binnedData, d=> d.y)])
                   .range([innerHeight, 0])
                   .nice()
+
+    useEffect(() => {
+        const brush = brushX()
+                        .extent([[0,0], [innerWidth, innerHeight]])
+        
+        brush(select(brushRef.current));
+
+        brush.on('brush end', (event) => {
+            setBrushExtent(event.selection && event.selection.map(xScale.invert))
+
+        });
+
+    }, [innerWidth, innerHeight]);
 
     return(
         <>
@@ -103,6 +123,7 @@ export const DateHistogram = ({
                 tooltipFormat = {xAxisTickFormat}
                 innerHeight={innerHeight}
                 />
+                <g ref={brushRef} />
             </g>
         </>
     )
