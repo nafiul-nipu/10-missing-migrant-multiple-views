@@ -1,4 +1,5 @@
 import { geoNaturalEarth1, geoPath, geoGraticule } from "d3";
+import { useMemo } from "react";
 
 const projection = geoNaturalEarth1()
 const path = geoPath(projection)
@@ -11,26 +12,32 @@ export const WorldMap = ({
     sizeValue
 }) => (
         <g className='mark'> 
-            <path 
-                className='sphere'
-                d={path({type: 'Sphere'})}
-            />
+           { useMemo(() =>
 
-            <path 
-                className='graticules'
-                d={path(graticule())}
-            />
+                <>
+                    <path 
+                        className='sphere'
+                        d={path({type: 'Sphere'})}
+                    />
 
-            {land.features.map(feature => 
-                <path 
-                    className='land'
-                    d={path(feature)}
-                />
+                    <path 
+                        className='graticules'
+                        d={path(graticule())}
+                    />
+
+                    {land.features.map(feature => 
+                        <path 
+                            className='land'
+                            d={path(feature)}
+                        />
+                    )}
+                    <path 
+                        className='interiors'
+                        d={path(interiors)}
+                    />
+                </>
+                , [land, interiors]
             )}
-            <path 
-                className='interiors'
-                d={path(interiors)}
-            />
 
             {data.map(d => {
                 const [x, y] = projection(d.coords)

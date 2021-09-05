@@ -10,7 +10,7 @@ import {
     max,
     brushX
 } from 'd3';
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useMemo } from 'react';
 
 import {HistogramPlot} from './HistogramPlot';
 import {AxisBottom} from './AxisBottom';
@@ -23,6 +23,13 @@ const margin = {top:0, right:30, bottom:20, left:50}
 const xAxisLabelOffset = 50
 const yAxisLabelOffset = 30
 
+const xAxisTickFormat = timeFormat("%m/%d/%Y")
+
+const xAxisLabel = 'Time'
+  
+const yValue = d =>d["Total Dead and Missing"] ;
+const yAxisLabel = 'Total Dead and Missing'
+
 export const DateHistogram = ({
     data,
     width,
@@ -30,43 +37,49 @@ export const DateHistogram = ({
     setBrushExtent,
     xValue
 }) =>{
-    const brushRef = useRef();
-
-    const xAxisLabel = 'Time'
-  
-  
-    const yValue = d =>d["Total Dead and Missing"] ;
-    const yAxisLabel = 'Total Dead and Missing'
-  
+    const brushRef = useRef();  
   
     const innerHeight = height - margin.top - margin.bottom
     const innerWidth = width - margin.left - margin.right
   
-    const xAxisTickFormat = timeFormat("%m/%d/%Y")
-  
-    const xScale = scaleTime()
+    const xScale = useMemo(
+        () => scaleTime()
                     .domain(extent(data, xValue))
                     .range([0, innerWidth])
-                    .nice()
+                    .nice(), 
+                [data, xValue, innerWidth]
+                
+        );
   
   
-    const [start, stop] = xScale.domain()
+    
   
-    const binnedData = bin()
-                    .value(xValue)
-                    .domain(xScale.domain())
-                    .thresholds(timeMonths(start, stop))
-                    (data)
-                    .map(array => ({
-                      y : sum(array, yValue),
-                      x0: array.x0,
-                      x1: array.x1
-                    }));
+    const binnedData = useMemo(() =>{
+        const [start, stop] = xScale.domain()
+        return (
+            bin()
+                .value(xValue)
+                .domain(xScale.domain())
+                .thresholds(timeMonths(start, stop))
+                (data)
+                .map(array => ({
+                    y : sum(array, yValue),
+                    x0: array.x0,
+                    x1: array.x1
+                }))
+        )
+        
+    }, 
+    [xValue, xScale, data]
+    );
   
-    const yScale = scaleLinear()
-                  .domain([0, max(binnedData, d=> d.y)])
-                  .range([innerHeight, 0])
-                  .nice()
+    const yScale = useMemo(() =>(
+        scaleLinear()
+            .domain([0, max(binnedData, d=> d.y)])
+            .range([innerHeight, 0])
+            .nice()
+    ), [binnedData, innerHeight])
+    
 
     useEffect(() => {
         const brush = brushX()
@@ -79,7 +92,7 @@ export const DateHistogram = ({
 
         });
 
-    }, [innerWidth, innerHeight]);
+    }, [innerWidth, innerHeight, setBrushExtent, xScale]);
 
     return(
         <>

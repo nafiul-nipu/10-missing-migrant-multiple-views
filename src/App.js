@@ -34,7 +34,8 @@ function App() {
     <svg width={width} height={height}>      
       <BubbleMap 
         worldAtlas={worldAtlas}
-        data={filteredData}
+        data={data}
+        filteredData={filteredData}
       />
       <g transform={`translate(0, ${height - dateHistogramSize * height})`}>
         <DateHistogram 
