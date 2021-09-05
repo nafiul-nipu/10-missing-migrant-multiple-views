@@ -1,25 +1,37 @@
-import logo from './logo.svg';
 import './App.css';
 
+import { useWorldAtlas } from './components/BubbleMap/useWorldAtlas';
+import {useData} from './components/useData'
+import { BubbleMap } from './components/BubbleMap/BubbleMap';
+import {DateHistogram} from './components/DataHistogram/DateHistogram';
+
+
+const width = 960;
+const height = 500;
+
 function App() {
+  const worldAtlas = useWorldAtlas()
+  const data = useData()
+
+  if(!worldAtlas || !data){
+    return <pre>Loading ...</pre>
+  }
+
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <svg width={width} height={height}>      
+      <BubbleMap 
+        worldAtlas={worldAtlas}
+        data={data}
+      />
+
+      <DateHistogram 
+        data={data}      
+      />
+    </svg>
   );
+
 }
 
 export default App;
+ 
