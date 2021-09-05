@@ -7,13 +7,22 @@ import {scaleLinear,
     sum,
     max} from 'd3';
 
-import {HistogramPlot} from './HistogramPlot'
+import {HistogramPlot} from './HistogramPlot';
+import {AxisBottom} from './AxisBottom';
+import {AxisLeft} from './AxisLeft';
 
-const width = 960;
-const height = 500;
-const margin = {top:20, right:30, bottom:65, left:90} 
+// const width = 960;
+// const height = 100;
+const margin = {top:0, right:30, bottom:20, left:50} 
 
-export const DateHistogram = ({data}) =>{
+const xAxisLabelOffset = 50
+const yAxisLabelOffset = 30
+
+export const DateHistogram = ({
+    data,
+    width,
+    height
+}) =>{
 
     const xValue = d => d["Reported Date"] ;
     const xAxisLabel = 'Time'
@@ -53,42 +62,49 @@ export const DateHistogram = ({data}) =>{
                   .nice()
 
     return(
-        <g transform={`translate(${margin.left}, ${margin.top})`}>
-      
-        {/* <AxisBottom 
-          xScale ={xScale}
-          innerHeight = {innerHeight}
-          tickFormat = {xAxisTickFormat}
-          tickOffset = {5}
-        />
-  
-        <text
-          className='axis-label'
-          x={innerWidth / 2}
-          y={innerHeight + xAxisLabelOffset}
-          textAnchor='middle'
-        >{xAxisLabel}</text>
-  
-        <AxisLeft 
-          yScale = {yScale}
-          innerWidth={innerWidth}
-          tickOffset = {5}
-        />
+        <>
+            <rect 
+                    width={width}
+                    height={height}
+                    fill='white'
+                />
+            <g transform={`translate(${margin.left}, ${margin.top})`}>
+
+                <AxisBottom 
+                xScale ={xScale}
+                innerHeight = {innerHeight}
+                tickFormat = {xAxisTickFormat}
+                tickOffset = {5}
+                />
         
-        <text
-          className='axis-label'       
-          textAnchor='middle'
-          transform={`translate(${-yAxisLabelOffset}, ${innerHeight / 2} )rotate(-90)`}
-        >{yAxisLabel}</text> */}
-  
-        <HistogramPlot 
-          binnedData={binnedData}
-          xScale = {xScale}
-          yScale = {yScale}
-          tooltipFormat = {xAxisTickFormat}
-          innerHeight={innerHeight}
-        />
-        </g>
+                <text
+                className='axis-label'
+                x={innerWidth / 2}
+                y={innerHeight + xAxisLabelOffset}
+                textAnchor='middle'
+                >{xAxisLabel}</text>
+        
+                <AxisLeft 
+                yScale = {yScale}
+                innerWidth={innerWidth}
+                tickOffset = {5}
+                />
+                
+                <text
+                className='axis-label'       
+                textAnchor='middle'
+                transform={`translate(${-yAxisLabelOffset}, ${innerHeight / 2} )rotate(-90)`}
+                >{yAxisLabel}</text>
+        
+                <HistogramPlot 
+                binnedData={binnedData}
+                xScale = {xScale}
+                yScale = {yScale}
+                tooltipFormat = {xAxisTickFormat}
+                innerHeight={innerHeight}
+                />
+            </g>
+        </>
     )
 
 }

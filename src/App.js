@@ -9,9 +9,11 @@ import {DateHistogram} from './components/DataHistogram/DateHistogram';
 const width = 960;
 const height = 500;
 
+const dateHistogramSize = 0.2;
+
 function App() {
-  const worldAtlas = useWorldAtlas()
-  const data = useData()
+  const worldAtlas = useWorldAtlas();
+  const data = useData();
 
   if(!worldAtlas || !data){
     return <pre>Loading ...</pre>
@@ -24,10 +26,13 @@ function App() {
         worldAtlas={worldAtlas}
         data={data}
       />
-
-      <DateHistogram 
-        data={data}      
-      />
+      <g transform={`translate(0, ${height - dateHistogramSize * height})`}>
+        <DateHistogram 
+          data={data}   
+          width={width}
+          height = {dateHistogramSize * height}   
+        />
+      </g>
     </svg>
   );
 

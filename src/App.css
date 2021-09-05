@@ -2,7 +2,6 @@
   font-family: 'Poppins', sans-serif;
 }
 
-
 .mark .land{
   fill:#ececec;
 }
@@ -16,7 +15,7 @@
   stroke: #d9dfe0;
 }
 
-.mark .graticules{
+.mark .graticules, .tick line{
   fill:none;
   stroke: #ececec;
 }
@@ -25,3 +24,21 @@ circle{
   fill: #137b80;
   opacity: 0.3;
 }
+
+/* .tick line{
+  stroke: #ececec;
+} */
+
+.tick text{
+  fill: #8e8883;
+  font-size: 0.5em;
+}
+.mark rect{
+  fill: #137B80;
+}
+
+.axis-label{
+  font-size: 0.5em;
+  fill: #8e8883;
+}
+
